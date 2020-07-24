@@ -23,7 +23,11 @@ func main() {
 }
 
 func getRequestIpHandler(w http.ResponseWriter, r *http.Request) {
-	msg := fmt.Sprintf("Your address is %s", r.RemoteAddr)
+	remoteAddr := r.Header.Get("X-FORWARDED-FOR")
+	if remoteAddr == "" {
+		remoteAddr = r.RemoteAddr
+	}
+	msg := fmt.Sprintf("Your address is %s", remoteAddr)
 	io.WriteString(w, msg)
 	log.Println(msg)
 }
