@@ -23,5 +23,7 @@ func main() {
 }
 
 func getRequestIpHandler(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, (fmt.Sprintf("Your address is %s", r.RemoteAddr)))
+	msg := fmt.Sprintf("Your address is %s", r.RemoteAddr)
+	io.WriteString(w, msg)
+	log.Println(msg)
 }
