@@ -22,19 +22,27 @@ func main() {
 	}
 }
 
+type httpResponseWriter struct {
+	http.ResponseWriter
+}
+
+func (x *httpResponseWriter ) logClientIp(msg string) {
+	io.WriteString(x.ResponseWriter, msg)
+	log.Println(msg)
+}
+
 func getRequestIpHandler(w http.ResponseWriter, r *http.Request) {
 	headers := []string{"x-forwarded-for", "true-client-ip"}
 	msg := fmt.Sprintf("Looking for headers %v\n", headers)
-	io.WriteString(w, msg)
-	log.Println(msg)
+
+	log := httpResponseWriter{w}
+	log.logClientIp(msg)
 
 	for _, header := range headers {
 		clientIp := r.Header.Get(header)
 		msg = fmt.Sprintf("%v: %v\n", header, clientIp)
-		io.WriteString(w, msg)
-		log.Println(msg)
+		log.logClientIp(msg)
 	}
 	msg = fmt.Sprintf("Remote Addr: %v\n", r.RemoteAddr)
-	io.WriteString(w, msg)
-	log.Println(msg)
+	log.logClientIp(msg)
 }
